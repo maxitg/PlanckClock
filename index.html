@@ -1,0 +1,184 @@
+<html>
+<head>
+<style>
+table {
+    border-collapse:collapse;
+    margin-left: auto;
+    margin-right: auto;
+}
+td {
+    padding: 4px;
+}
+</style>
+<meta name="google-site-verification" content="f1GKWpL6pKto0dzwg5m-1cnVhgTs5SCDUhmgLnuXxwQ" />
+<title>Planck Clock</title>
+<script type="text/javascript" src="js/MathContext.js"></script>
+<script type="text/javascript" src="js/BigDecimal.js"></script>
+<script type="text/javascript" src="js/biginteger.js"></script>
+
+<script type="text/javascript">
+
+function timeToString(bigTime, secQ = true, short = false, coloroverride=false)
+{
+	timeString = bigTime.toString(16);
+	
+	if (bigTime < 0) timeString = timeString.substring(1, timeString.length);
+	
+	year = date = minute = second = "";
+	
+	if (timeString.length >= 43) year = "<small>" + timeString.substring(timeString.length-44,timeString.length-42) + "</small> ";
+	if (timeString.length >= 41) date = "<big>" + timeString.substring(timeString.length-42,timeString.length-40) + "</big>:";
+	if (timeString.length >= 39) minute = "<big>" + timeString.substring(timeString.length-40,timeString.length-38) + "</big> ";
+	if (secQ && timeString.length >= 37) {
+		if (!short || date == "") second = "<small>" + timeString.substring(timeString.length-38,timeString.length-36) + "</small>";
+		else second = "<small><font style=\"opacity:.0\">00</font></small>"
+	}
+	
+	result = year+date+minute+second;
+	if ((result == "") || (result == "<small>-</small>")) result = "<big>0</big>";
+
+	return result;
+}
+
+function fullTimeToString(bigTime)
+{
+	timeString = bigTime.toString(16);
+
+	era = "<small>" + timeString.substring(timeString.length-51,timeString.length-48) + "</small> ";
+	age = "<small>" + timeString.substring(timeString.length-48,timeString.length-44) + "</small> ";
+	year = "<small>" + timeString.substring(timeString.length-44,timeString.length-42) + "</small> ";
+	date = "<big>" + timeString.substring(timeString.length-42,timeString.length-40) + "</big>:";
+	minute = "<big>" + timeString.substring(timeString.length-40,timeString.length-38) + "</big> ";
+	second = "<small>" + timeString.substring(timeString.length-38,timeString.length-36) + "</small>";
+
+	return era+age+year+date+minute+second;
+}
+
+function bigTime(today)
+{
+	var b = BigInteger.parse(String(today.getTime()));
+	b = b.multiply(new BigDecimal("1.85488921611077614362073522501613984835872810662879E40"));
+	b = b.add(new BigDecimal("8071833529780809902742760646451040575040216335127996084558318"));
+
+	return b;
+}
+
+function bigTimeMaxPi(today)
+{
+        var b = BigInteger.parse(String(today.getTime()));
+        b = b.add(new BigDecimal("2208988800000"));
+	b = b.add(new BigDecimal("-2906804700000"));
+        b = b.multiply(new BigDecimal("1.8549227795646867220918E40"));
+
+        return b;
+}
+
+function time(today, subsec = true)
+{
+	return '<font size="2" face="courier">' + timeToString(bigTime(today), subsec, false, true) + '</font>';
+}
+
+function timePi(today)
+{
+	return '<font size="2" face="courier">' + timeToString(bigTimeMaxPi(today)) + '</font>';
+}
+
+function fulltime(today)
+{
+	return '<font size="10" face="courier">' + fullTimeToString(bigTime(today)) + ' <font size="-1">&middot10<sup>24</sup> &#177 2&middot10<sup>30</sup></font>' + '</font>';
+}
+
+function fulltimeMaxPi(today)
+{
+	return '<font size="10" face="courier">' + fullTimeToString(bigTimeMaxPi(today)) + ' <font size="-1">&middot10<sup>24</sup></font>' + '</font>';
+}
+
+function diff(today, coloroverride=false)
+{
+	return '<font size="2" face="courier">' + timeToString(bigTime(today).subtract(bigTime(new Date())), true, true, coloroverride) + '</font>';
+}
+
+function diff2(date1, date2, coloroverride=false)
+{
+	return '<font size="2" face="courier">' + timeToString(bigTime(date2).subtract(bigTime(date1)), true, true, coloroverride) + '</font>';
+}
+
+function fraction(date1, date2)
+{
+    result = '<font size="2" face="courier">';
+    
+    if (date1 <= new Date() && new Date() < date2) {
+        result += '.';
+        result += '<big><b>' + ((bigTime(new Date()).subtract(bigTime(date1))).multiply(4096).divide(bigTime(date2).subtract(bigTime(date1)))).add(4096).toString(16).substring(1,4) + '</big>';
+    } else if (date1 > new Date()) {
+        result += 'future';
+    } else {
+        result += 'past';
+    }
+    result += '</font>';
+    
+    return result;
+}
+
+function event(name, dateBegin, dateEnd) {
+	rightAlignSeparator = "</td><td style='text-align:right;'>";
+	nameStyle = "";
+
+	color = "white";
+
+	if (dateBegin < new Date() && new Date() < dateEnd) {
+		color = "#CEDDA4";
+		rightAlignSeparator += "<b>";
+		nameStyle += "<b>";
+	}
+
+	if (dateEnd < new Date()) {
+		nameStyle += "<font color=\"gray\">";
+		rightAlignSeparator = "</td><td style='text-align:right;'><font color=\"gray\">";
+	}
+
+	coloroverride = false;
+	if (dateEnd < new Date()) coloroverride = true;
+
+	return "<tr bgcolor=" + color + "><td>" + nameStyle + name + rightAlignSeparator + time(dateBegin, false) + rightAlignSeparator + time(dateEnd, false) + rightAlignSeparator + diff(dateBegin, coloroverride) + rightAlignSeparator + diff(dateEnd, coloroverride) + rightAlignSeparator + fraction(dateBegin, dateEnd) + rightAlignSeparator + diff2(dateBegin, dateEnd, true) + "</td></tr>";
+}
+
+function startTime(first)
+{
+
+	if (first) lastUpd = new Date();
+
+	ftstrmaxpi = fulltime(new Date());
+
+	document.getElementById('curtimemaxpi').innerHTML=ftstrmaxpi;//+'<font size="2" face="courier"> (&plusmn a<font size="-1">&middot10<sup>30</sup></font>)';	
+
+	if (diff(lastUpd).length > 49) first = 1;
+
+		var eventTable = "";
+		eventTable += "<tr><td width='250'>Event</td><td width='100' style='text-align:right;'>Begin</td><td width='200' style='text-align:right;'>End</td><td width='200' style='text-align:right;'>Till Begin</td><td width='200' style='text-align:right;'>Till End</td><td style='text-align:right' width='200'>Fraction</td><td width='200' style='text-align:right;'>Duration</td></tr>"
+
+		eventTable += event('US Lockdown (estimate)', new Date(2020,2,20,0,0), new Date(2020,5,1,0,0));
+//		eventTable += "<tr><td></td></tr>";
+//		eventTable += event('WPP: Interplay with Distributed Computing', new Date(2020,3,22,14,30), new Date(2020,3,22,16,30));
+//		eventTable += event('WPP: Spin and Charge, Part 3', new Date(2020,3,23,15,30), new Date(2020,3,23,17,30));
+		
+		eventTable += "<tr><td></td></tr>";
+		eventTable += event('HT 4', new Date(2020,3,26,18,30), new Date(2020,3,26,22,0));
+
+		document.getElementById('eventtable').innerHTML=eventTable;
+
+		lastUpd = new Date();
+
+	t = setTimeout("startTime(0)",75);
+}
+
+</script>
+</head>
+
+<body onload="startTime(1)">
+<h1 style="text-align:center;"><div id="curtimemaxpi"> </div></h1>
+
+<font size="3"><table id="eventtable"> </table></font>
+
+</body>
+</html>
