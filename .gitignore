@@ -1,3 +1,11 @@
 # macOS
 
 *.DS_Store
+
+# Build directory
+
+Build/
+
+# Built paclets
+
+*.paclet
