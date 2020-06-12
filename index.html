@@ -180,6 +180,9 @@
       eventTable += event('Wolfram Summer School 12', dateFromUTC(2020, 6, 21, 20, 12), dateFromUTC(2020, 7, 18, 6, 55));
       eventTable += event('WWDC 8B', dateFromUTC(2020, 6, 21, 20, 12), dateFromUTC(2020, 6, 27, 7, 32));
 
+      eventTable += "<tr><td></td></tr>";
+      eventTable += event('SRM 313', dateFromUTC(2020, 6, 21, 16, 0, 0), dateFromUTC(2020, 6, 21, 18, 0, 0));
+
       document.getElementById('eventtable').innerHTML = eventTable;
 
       lastUpd = new Date();
