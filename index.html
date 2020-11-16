@@ -171,11 +171,12 @@
         "<td style = 'text-align: right' width = '200'>Fraction</td>" +
         "<td width = '200' style = 'text-align: right;'>Duration</td></tr>";
 
-      eventTable += event('US Lockdown (estimate)', dateFromUTC(2020, 3, 19, 21, 52), dateFromUTC(2020, 7, 14, 15, 22));
+      eventTable += event('COVID-19 Pandemic (estimate)', dateFromUTC(2019, 12, 1, 0, 0), dateFromUTC(2021, 7, 1, 0, 0));
 
       eventTable += "<tr><td></td></tr>";
-      eventTable += event('Wolfram Summer School 12', dateFromUTC(2020, 6, 21, 20, 12), dateFromUTC(2020, 7, 18, 6, 55));
-      
+      eventTable += event('M2:SRaSPOT', dateFromUTC(2020, 11, 20, 23, 30), dateFromUTC(2020, 11, 21, 23, 30));
+      eventTable += event('M3:GSMNP', dateFromUTC(2020, 11, 25, 23, 30), dateFromUTC(2020, 11, 29, 23, 30));
+
       document.getElementById('eventtable').innerHTML = eventTable;
 
       lastUpd = new Date();
